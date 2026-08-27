@@ -60,7 +60,7 @@ A full-stack, role-based **Student Result Management System** built as a final y
 ## 📁 Project Structure
 
 ```
-StudentResultMS/
+Academic Grade Management System/
 │
 ├── backend/
 │   ├── config/          # Database connection
@@ -97,8 +97,8 @@ StudentResultMS/
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/ansht120/full-stack-web-development.git
-cd full-stack-web-development
+git clone https://gitlab.com/ansht_121/college-full-stack-project.git
+cd "college-full-stack-project/Academic Grade Management System"
 ```
 
 ---
@@ -241,8 +241,11 @@ audit_logs     → id, user_id, action, module, created_at
 
 ## 👨‍💻 Author
 
-**Ansh Thakur**
-- GitHub: [@ansht120](https://github.com/ansht120)
+**Ansh Thakur** — Data Analyst & Machine Learning Practitioner
+
+[![GitLab](https://img.shields.io/badge/GitLab-ansht__121-FC6D26?style=flat&logo=gitlab&logoColor=white)](https://gitlab.com/ansht_121)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live_Site-00C7B7?style=flat&logo=netlify&logoColor=white)](https://ansh-thakur.netlify.app/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ansh-thakur-5407192b4/)
 
 ---
 

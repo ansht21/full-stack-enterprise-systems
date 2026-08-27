@@ -1,6 +1,14 @@
-# Warehouse Inventory Management System
+# 📦 Warehouse Inventory Management System
 
-A full-stack warehouse and inventory management application built as a final year MCA college project. Manages products, categories, suppliers, purchases, sales, inventory logs, users, and a dashboard.
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+
+[![Full-Stack Repo](https://img.shields.io/badge/GitLab-college--full--stack--project-FC6D26?style=flat&logo=gitlab&logoColor=white)](https://gitlab.com/ansht_121/college-full-stack-project) · [Profile](https://gitlab.com/ansht_121) · [Portfolio](https://ansh-thakur.netlify.app/)
+
+A full-stack warehouse and inventory management application built as a final year college project. Manages products, categories, suppliers, purchases, sales, inventory logs, users, and a dashboard.
 
 ## Tech Stack
 
@@ -70,3 +78,13 @@ MySQL is used in production (`mysql-connector-j`). Tests use H2 in-memory. Schem
 ## License
 
 College project — for educational use.
+
+---
+
+## 👨‍💻 Author
+
+**Ansh Thakur** — Data Analyst & Machine Learning Practitioner
+
+[![GitLab](https://img.shields.io/badge/GitLab-ansht__121-FC6D26?style=flat&logo=gitlab&logoColor=white)](https://gitlab.com/ansht_121)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live_Site-00C7B7?style=flat&logo=netlify&logoColor=white)](https://ansh-thakur.netlify.app/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ansh-thakur-5407192b4/)
