@@ -18,7 +18,7 @@
 [![GitHub Profile](https://img.shields.io/badge/GitHub-ansht21-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ansht21)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Live_Site-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://ansh-thakur-netlify.netlify.app/)
 [![Data Analytics](https://img.shields.io/badge/GitHub-Data_Analytics-6C8CFF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ansht21/data-analytics)
-[![Machine Learning](https://img.shields.io/badge/GitHub-Data_Science_Projects-A97BFF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ansht21/Data-Science-Project)
+[![Machine Learning](https://img.shields.io/badge/GitHub-Machine_Learning_Portfolio-A97BFF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ansht21/machine-learning-portfolio)
 
 </div>
 
@@ -83,7 +83,7 @@ A role-based **Student Result Management System** that allows colleges to manage
 ## Repository Structure
 
 ```
-college-full-stack-project/
+full-stack-enterprise-systems/
 │
 ├── .github/workflows/
 │   └── ci.yml                                      # Automated CI/CD pipeline (backend test & frontend build)
