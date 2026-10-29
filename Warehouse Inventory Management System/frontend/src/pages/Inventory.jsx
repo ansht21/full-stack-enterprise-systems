@@ -1,147 +1,69 @@
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import api from '../api/client'
-import { PageHeader, Spinner, EmptyState, Pagination, Badge } from '../components/ui'
+import { useState, useEffect } from 'react';
+import API from '../api/axios';
+import toast from 'react-hot-toast';
+import { ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 export default function Inventory() {
-  const [products, setProducts] = useState([])
-  const [form, setForm] = useState({ productId: '', quantity: 1, note: '', type: 'stock-in' })
-  const [page, setPage] = useState(0)
-  const [logs, setLogs] = useState({ content: [], totalPages: 0 })
-  const [loading, setLoading] = useState(true)
+  const [logs, setLogs] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  function loadLogs() {
-    setLoading(true)
-    api
-      .get('/inventory/history', { params: { page, size: 15 } })
-      .then((r) => setLogs(r.data))
-      .finally(() => setLoading(false))
-  }
+  const fetchLogs = () => {
+    setLoading(true);
+    API.get(`/inventory?page=${page}&size=20`).then(res => {
+      setLogs(res.data.content || []); setTotalPages(res.data.totalPages || 0);
+    }).catch(() => toast.error('Failed')).finally(() => setLoading(false));
+  };
 
-  useEffect(() => {
-    api.get('/products', { params: { size: 100 } }).then((r) => setProducts(r.data.content))
-  }, [])
-
-  useEffect(() => {
-    loadLogs()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
-
-  async function submit(e) {
-    e.preventDefault()
-    if (!form.productId) {
-      toast.error('Select a product')
-      return
-    }
-    try {
-      await api.post(`/inventory/${form.type}`, {
-        productId: Number(form.productId),
-        quantity: Number(form.quantity),
-        note: form.note || null,
-      })
-      toast.success(form.type === 'stock-in' ? 'Stock added' : 'Stock removed')
-      setForm({ ...form, quantity: 1, note: '' })
-      loadLogs()
-    } catch (err) {
-      toast.error(err.message)
-    }
-  }
+  useEffect(() => { fetchLogs(); }, [page]);
 
   return (
-    <div>
-      <PageHeader title="Inventory" subtitle="Adjust stock and view movement history" />
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-gray-800">Inventory History</h2>
 
-      <div className="mb-6 card">
-        <h3 className="mb-3 font-semibold text-gray-800">Stock Adjustment</h3>
-        <form onSubmit={submit} className="grid grid-cols-1 gap-4 md:grid-cols-5">
-          <div className="md:col-span-2">
-            <label className="label">Product</label>
-            <select
-              className="input"
-              value={form.productId}
-              onChange={(e) => setForm({ ...form, productId: e.target.value })}
-            >
-              <option value="">— Select product —</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} (stock: {p.quantity})
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="label">Type</label>
-            <select
-              className="input"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="stock-in">Stock In</option>
-              <option value="stock-out">Stock Out</option>
-            </select>
-          </div>
-          <div>
-            <label className="label">Quantity</label>
-            <input
-              type="number"
-              min="1"
-              className="input"
-              value={form.quantity}
-              onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-              required
-            />
-          </div>
-          <div className="flex items-end">
-            <button className="btn-primary w-full">Apply</button>
-          </div>
-          <div className="md:col-span-5">
-            <label className="label">Note (optional)</label>
-            <input
-              className="input"
-              value={form.note}
-              onChange={(e) => setForm({ ...form, note: e.target.value })}
-              placeholder="e.g. Damaged items removed"
-            />
-          </div>
-        </form>
-      </div>
-
-      <div className="card overflow-x-auto">
-        <h3 className="mb-3 font-semibold text-gray-800">Movement History</h3>
-        {loading ? (
-          <Spinner />
-        ) : logs.content.length === 0 ? (
-          <EmptyState message="No stock movements yet." />
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr>
-                <th className="table-th">Date</th>
-                <th className="table-th">Product</th>
-                <th className="table-th">Type</th>
-                <th className="table-th">Qty</th>
-                <th className="table-th">Note</th>
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 text-gray-600">
+            <tr>
+              <th className="px-4 py-3 text-left">Product</th>
+              <th className="px-4 py-3 text-center">Type</th>
+              <th className="px-4 py-3 text-right">Quantity</th>
+              <th className="px-4 py-3 text-left">Reference</th>
+              <th className="px-4 py-3 text-left">Notes</th>
+              <th className="px-4 py-3 text-left">Date</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {loading ? (
+              <tr><td colSpan={6} className="text-center py-8 text-gray-400">Loading...</td></tr>
+            ) : logs.length === 0 ? (
+              <tr><td colSpan={6} className="text-center py-8 text-gray-400">No inventory logs yet</td></tr>
+            ) : logs.map(log => (
+              <tr key={log.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium">{log.product?.name || '-'}</td>
+                <td className="px-4 py-3 text-center">
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${log.type === 'STOCK_IN' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {log.type === 'STOCK_IN' ? <ArrowUpCircle className="w-3 h-3" /> : <ArrowDownCircle className="w-3 h-3" />}
+                    {log.type}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right font-medium">{log.quantity}</td>
+                <td className="px-4 py-3 text-gray-500 text-xs">{log.referenceType || '-'}</td>
+                <td className="px-4 py-3 text-gray-500 text-xs">{log.notes || '-'}</td>
+                <td className="px-4 py-3 text-gray-500 text-xs">{log.createdAt?.replace('T', ' ').substring(0, 16)}</td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {logs.content.map((l) => (
-                <tr key={l.id}>
-                  <td className="table-td">{new Date(l.createdAt).toLocaleString()}</td>
-                  <td className="table-td font-medium">{l.productName}</td>
-                  <td className="table-td">
-                    <Badge color={l.type === 'STOCK_IN' ? 'green' : 'red'}>
-                      {l.type === 'STOCK_IN' ? 'In' : 'Out'}
-                    </Badge>
-                  </td>
-                  <td className="table-td">{l.quantity}</td>
-                  <td className="table-td">{l.note || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 p-4 border-t">
+            <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1 border rounded text-sm disabled:opacity-50">Prev</button>
+            <span className="px-3 py-1 text-sm text-gray-600">Page {page + 1} of {totalPages}</span>
+            <button onClick={() => setPage(page + 1)} disabled={page >= totalPages - 1} className="px-3 py-1 border rounded text-sm disabled:opacity-50">Next</button>
+          </div>
         )}
-        <Pagination page={page} totalPages={logs.totalPages} onChange={setPage} />
       </div>
     </div>
-  )
+  );
 }

@@ -1,48 +1,41 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import api from '../api/client'
+import { createContext, useContext, useState, useEffect } from 'react';
+import API from '../api/axios';
 
-const AuthContext = createContext(null)
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('user')
-    if (stored) {
-      setUser(JSON.parse(stored))
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
     }
-    setLoading(false)
-  }, [])
+    setLoading(false);
+  }, []);
 
-  async function login(username, password) {
-    const { data } = await api.post('/auth/login', { username, password })
-    const loggedIn = {
-      username: data.username,
-      fullName: data.fullName,
-      role: data.role,
-    }
-    localStorage.setItem('token', data.token)
-    localStorage.setItem('user', JSON.stringify(loggedIn))
-    setUser(loggedIn)
-    return loggedIn
-  }
+  const login = async (username, password) => {
+    const { data } = await API.post('/auth/login', { username, password });
+    localStorage.setItem('token', data.token);
+    const userData = { id: data.id, username: data.username, email: data.email, fullName: data.fullName, role: data.role };
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+    return data;
+  };
 
-  function logout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-  }
-
-  const isAdmin = user?.role === 'ADMIN'
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export function useAuth() {
-  return useContext(AuthContext)
-}
+export const useAuth = () => useContext(AuthContext);

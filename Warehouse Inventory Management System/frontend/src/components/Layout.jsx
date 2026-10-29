@@ -1,77 +1,88 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useState } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { LayoutDashboard, Package, Tags, Truck, ShoppingCart, ShoppingBag, Archive, LogOut, Menu, X, User, Sparkles } from 'lucide-react';
 
-const links = [
-  { to: '/', label: 'Dashboard', icon: '📊' },
-  { to: '/categories', label: 'Categories', icon: '🗂️' },
-  { to: '/products', label: 'Products', icon: '📦' },
-  { to: '/suppliers', label: 'Suppliers', icon: '🏭' },
-  { to: '/inventory', label: 'Inventory', icon: '📥' },
-  { to: '/purchases', label: 'Purchases', icon: '🛒' },
-  { to: '/sales', label: 'Sales', icon: '🧾' },
-  { to: '/reports', label: 'Reports', icon: '📈' },
-]
+const navItems = [
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/products', label: 'Products', icon: Package },
+  { path: '/categories', label: 'Categories', icon: Tags },
+  { path: '/suppliers', label: 'Suppliers', icon: Truck },
+  { path: '/purchases', label: 'Purchases', icon: ShoppingCart },
+  { path: '/sales', label: 'Sales', icon: ShoppingBag },
+  { path: '/inventory', label: 'Inventory', icon: Archive },
+  { path: '/ai-forecast', label: 'AI Demand Forecast', icon: Sparkles },
+];
 
-const adminLinks = [{ to: '/users', label: 'Users', icon: '👥' }]
+export default function Layout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-export default function Layout({ children }) {
-  const { user, logout, isAdmin } = useAuth()
-  const navigate = useNavigate()
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
-
-  const navClass = ({ isActive }) =>
-    `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition ${
-      isActive ? 'bg-brand-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-    }`
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="hidden w-64 flex-col bg-gray-900 p-4 md:flex">
-        <div className="mb-6 px-2">
-          <h1 className="text-lg font-bold text-white">WarehousePro</h1>
-          <p className="text-xs text-gray-400">Inventory System</p>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-indigo-700 text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-center h-16 bg-indigo-800">
+          <Package className="w-8 h-8 mr-2" />
+          <span className="font-bold text-lg">WMS</span>
         </div>
-        <nav className="flex flex-1 flex-col gap-1">
-          {links.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.to === '/'} className={navClass}>
-              <span>{l.icon}</span>
-              {l.label}
+        <nav className="mt-6 px-3">
+          {navItems.map(({ path, label, icon: Icon }) => (
+            <NavLink
+              key={path}
+              to={path}
+              end={path === '/'}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center px-4 py-3 mb-1 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? 'bg-indigo-800 text-white' : 'text-indigo-200 hover:bg-indigo-600'
+                }`
+              }
+            >
+              <Icon className="w-5 h-5 mr-3" />
+              {label}
             </NavLink>
           ))}
-          {isAdmin &&
-            adminLinks.map((l) => (
-              <NavLink key={l.to} to={l.to} className={navClass}>
-                <span>{l.icon}</span>
-                {l.label}
-              </NavLink>
-            ))}
         </nav>
       </aside>
 
-      {/* Main area */}
-      <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3">
-          <div className="md:hidden font-bold text-brand-700">WarehousePro</div>
-          <div className="ml-auto flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-800">{user?.fullName}</p>
-              <p className="text-xs text-gray-500">{user?.role}</p>
+      {/* Overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Navbar */}
+        <header className="flex items-center justify-between h-16 bg-white shadow px-4 lg:px-6">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 text-gray-600">
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-700 hidden lg:block">Warehouse Management</h1>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <User className="w-4 h-4" />
+              <span>{user?.fullName || user?.username}</span>
+              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full">{user?.role}</span>
             </div>
-            <NavLink to="/profile" className="btn-secondary">
-              Profile
-            </NavLink>
-            <button onClick={handleLogout} className="btn-danger">
+            <button onClick={handleLogout} className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
+              <LogOut className="w-4 h-4" />
               Logout
             </button>
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
-  )
+  );
 }
